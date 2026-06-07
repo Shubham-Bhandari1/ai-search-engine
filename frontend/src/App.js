@@ -41,9 +41,14 @@ function App() {
     setSearched(true);  // mark that search happened
 
     // Choose which API endpoint to call
-    const endpoint = searchType === 'ai'
-      ? `http://localhost:8000/ai-search?q=${query}`
-      : `http://localhost:8000/search?q=${query}`;
+    let endpoint;
+if (searchType === 'keyword') {
+  endpoint = `http://localhost:8000/search?q=${query}`;
+} else if (searchType === 'ai') {
+  endpoint = `http://localhost:8000/ai-search?q=${query}`;
+} else {
+  endpoint = `http://localhost:8000/hybrid-search?q=${query}`;
+}
 
     try {
       // Call your FastAPI backend
@@ -89,19 +94,25 @@ function App() {
 
       {/* ── Search Type Toggle ── */}
       <div className="toggle-container">
-        <button
-          className={`toggle-btn ${searchType === 'keyword' ? 'active' : ''}`}
-          onClick={() => setSearchType('keyword')}
-        >
-          🔤 Keyword Search
-        </button>
-        <button
-          className={`toggle-btn ${searchType === 'ai' ? 'active' : ''}`}
-          onClick={() => setSearchType('ai')}
-        >
-          🤖 AI Search
-        </button>
-      </div>
+  <button
+    className={`toggle-btn ${searchType === 'keyword' ? 'active' : ''}`}
+    onClick={() => setSearchType('keyword')}
+  >
+    🔤 Keyword
+  </button>
+  <button
+    className={`toggle-btn ${searchType === 'ai' ? 'active' : ''}`}
+    onClick={() => setSearchType('ai')}
+  >
+    🤖 AI
+  </button>
+  <button
+    className={`toggle-btn ${searchType === 'hybrid' ? 'active' : ''}`}
+    onClick={() => setSearchType('hybrid')}
+  >
+    ⚡ Hybrid
+  </button>
+</div>
 
       {/* ── Results ── */}
       <div className="results-container">
@@ -119,6 +130,7 @@ function App() {
           <p className="results-count">
             Found {results.length} results for "{query}"
             {searchType === 'ai' && ' (AI Semantic Search)'}
+            {searchType === 'hybrid' && ' (Hybrid Search)'}
           </p>
         )}
 
